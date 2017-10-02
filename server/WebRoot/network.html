@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>远程温室数据实时操作中心</title>
+	<meta name="viewport" content="width=device-width,initial-scale=1"charset="UTF-8">
+	<script type="text/javascript" src="javascript/jquery-1.8.2.js"></script>
+	<script type="text/javascript" src="javascript/jquery.mobile-1.4.5.js"></script>
+	<script type="text/javascript" src="javascript/network.js"></script>
+	<link rel="stylesheet" href="css/jquery.mobile-1.4.5.min.css">
+	<link rel="stylesheet" href="css/network.css">
+	
+</head>
+<body>
+	<div data-role="navbar" class="nav" data-theme='c'>
+
+			<ul id="navlist">
+				<li><a href=""  id="a1" onclick="edit(this)">网络状态</a>
+				</li>
+
+				<li><a href="" id="a2" onclick="edit(this)">实时数据</a>
+				</li>
+			</ul>
+	</div>
+	
+	<fieldset id="networkstate" style="display: none;">		
+		<div class="control">
+			<table  rules="rows" >		
+			<thead>
+				<tr>
+					<th>节点</th>
+					<th>父节点</th>
+					<th>链路质量</th>					
+				</tr>
+			</thead>
+			<tbody id="networkbody"></tbody>
+		</table>
+		</div>		
+	</fieldset>
+		
+	<fieldset id="realdata" style="display: none;">
+		<div class="control">
+			<table rules="rows">					
+			<thead>
+				<tr>
+					<th>时间</th>
+					<th>节点</th>
+					<th>空气温度</th>
+					<th>空气湿度</th>
+					<th>光照强度</th>
+					<th>Co2浓度</th>
+					<th>土壤温度</th>
+					<th>土壤湿度</th>
+					<th>节点电压</th>
+				</tr>
+			</thead>
+			<tbody id="realdatatbody"></tbody>
+		</table>
+		</div>		
+	</fieldset>
+</body>
+</html>

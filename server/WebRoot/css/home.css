@@ -1,0 +1,96 @@
+@CHARSET "UTF-8";
+
+body {
+	font-family: Monospace;
+	background-color: #000;
+	color: #fff;
+	margin: 0px;
+	overflow: hidden;
+}
+
+#info {
+	position: absolute;
+	top: 10px;
+	width: 100%;
+	text-align: center;
+	z-index: 100;
+	display: block;
+	color: #f00;
+	font-weight: bold;
+	/* text-decoration: underline; */
+	cursor: pointer
+}
+
+#controls {
+	position: absolute;
+	text-align: left;
+	top: 40px;
+	left: 5px;
+	padding: 5px;
+	margin: auto;
+	color: #009ee9;
+	font-weight: bold;
+	display: none;
+}
+#weatherinfo {
+	position: absolute;
+	text-align: left;
+	top: 40px;
+	left: 5px;
+	padding: 5px;
+	margin: auto;
+	color: #009ee9;
+	font-weight: bold;
+	display: none;
+}
+
+#alerts {
+	position: absolute;
+	text-align: left;
+	top: 40px;
+	left: 5px;
+	padding: 5px;
+	margin: auto;
+	color: #ff0000;
+	font-weight: bold;
+	display: none;
+}
+
+#cameravideo {
+	position: absolute;
+	text-align: left;
+	top: 40px;
+	left: 5px;
+	padding: 5px;
+	margin: auto;
+	color: #00a254;
+	font-weight: bold;
+	display: none;
+}
+
+#menue {
+	position: absolute;
+	top: auto;
+	left: auto;
+	margin: auto;
+	color: #00a254;
+	display: none;
+}
+
+#cameramenue {
+	position: absolute;
+	top: auto;
+	left: auto;
+	margin: auto;
+	color: #00a254;
+	display: none;
+}
+
+.control {
+	margin-bottom: 3px;
+	width: auto;
+}
+
+.control input {
+	background-color: #fff;
+}

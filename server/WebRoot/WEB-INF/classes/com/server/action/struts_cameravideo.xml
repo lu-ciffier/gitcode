@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+"-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+"http://struts.apache.org/dtds/struts-2.0.dtd" >
+<!-- struts2的核心配置文件，在应用部署时加载并解析 -->
+<struts>
+	<package name="videopackage" extends="struts-default" namespace="/">
+		<action name="video" class="cameravideoAction" method="video">
+		<result name="success" type="dispatcher">
+			/camera.jsp
+		</result>
+		</action>
+		<action name="opendev" class="cameravideoAction" method="base64">
+		</action>
+		<action name="closedev" class="cameravideoAction" method="stop">
+		</action>
+		<action name="baseimage" class="cameravideoAction" method="getBaseImage">
+		</action>
+	</package>
+</struts>

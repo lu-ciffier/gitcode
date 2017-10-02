@@ -1,0 +1,36 @@
+@CHARSET "UTF-8";
+
+body {
+	text-align: center;
+}
+table {
+	margin: auto;
+	padding: 0.5%;
+	width: 80%;
+	border-color: black;
+	border-style:solid;
+	text-align: center;
+}
+td,th {
+	text-align: center;
+}
+#tmanage {
+	height: 10%;
+	margin-top: 5%;
+}
+hr {
+	border-color: black;
+}
+input {
+	background-color: #43a2e2;
+	border-style: outset;
+}
+p {
+	font-family: fantasy;
+	font-size: 1.5em;
+	
+}
+button {
+	background-color: #43a2e2;
+	border-style: outset;
+}

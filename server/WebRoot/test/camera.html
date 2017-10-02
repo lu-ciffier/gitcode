@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>index.html</title>
+
+	<meta name="viewport" content="width=device-width,initial-scale=1"
+	charset="UTF-8">
+	<script type="text/javascript" src="javascript/jquery-1.8.2.js"></script>
+	<script type="text/javascript" src="javascript/jquery.mobile-1.4.5.js"></script>
+	<link rel="stylesheet" href="css/jquery.mobile-1.4.5.min.css">
+	<style type="text/css">
+	.ui-overlay-a,.ui-page-theme-a,.ui-page-theme-a .ui-panel-wrapper {
+    	background-color: #88B8F7;
+		text-align: center;
+	}
+	video,canvas {
+		margin-top: 50px;
+	}
+	</style>
+</head>
+
+<body>
+	<!-- <div id="support">my name</div> -->
+	<div id="content">
+	<div class="ui-grid-a">
+		<div class="ui-block-a">
+		<video id="video" width="320" height="320" autoplay></video>
+		</div>
+		<div class="ui-block-b">
+		<canvas id="canvas" width="320" height="320" >
+		</canvas>
+		</div>
+	</div>	
+		<button id="capture" data-inline='true'>拍照</button>
+		<button id="uploade" data-inline='true'>上传</button>
+	</div>
+<script type="text/javascript">
+	//判断浏览器是否支持HTML5 Canvas           
+	/* window.onload = function() {
+		try {
+			//动态创建一个canvas元 ，并获取他2Dcontext。如果出现异常则表示不支持        
+			document.getElementById("support").innerHTML ="浏览器支持HTML5 CANVAS";
+		} catch (e) {
+			document.getElementById("support").innerHTML = "浏览器不支持HTML5 CANVAS";
+		}
+	}; */
+
+	var canvas = document.getElementById("canvas");
+	var context = canvas.getContext("2d");
+	var video = document.getElementById("video");
+	var videoObj = {
+		"video" : true
+	};
+	var errBack = function(error) {
+		console.log("Video capture error: ", error.code);
+	};
+	//这段代 主要是获取摄像头的视频流并显示在Video 签中           
+	window.addEventListener("DOMContentLoaded", function() {
+		//navigator.getUserMedia这个写法在Opera中好像是navigator.getUserMedianow
+		if (navigator.getUserMedia) {
+			navigator.getUserMedia(videoObj, function(stream) {
+				video.src = stream;
+				video.play();
+			}, errBack);
+		} else if (navigator.webkitGetUserMedia) {
+			navigator.webkitGetUserMedia(videoObj, function(stream) {
+				video.src = window.webkitURL.createObjectURL(stream);
+				video.play();
+			}, errBack);
+		}
+		document.getElementById("capture").addEventListener("click", function() {
+			context.drawImage(video, 0, 0, 320, 240);
+			//CatchCode();           
+		}, false);
+	}, false);
+	//这个是拍照按钮的事件， 
+	$("#uploade").click(function(){
+		uploade();
+	});
+
+	//定时器         
+	//var interval = setInterval(CatchCode, "300");
+	//这个是 刷新上 图像的        
+	function uploade() {
+		//$("#capture").click();
+		//实际运用可不写，测试代 ， 为单击拍照按钮就获取了当前图像，有其他用途    
+		var canvans = document.getElementById("canvas");
+		//获取浏览器页面的画布对象                       
+		//以下开始编 数据   
+		var imgData = canvans.toDataURL();
+		//将图像转换为base64数据
+		var base64Data = imgData.substr(22);
+		//在前端截取22位之后的字符串作为图像数据       
+		//开始异步上  
+		var para = {"data":base64Data};
+		//alert("${pageContext.request.contextPath}");
+		$.post("save", para, function(data) {
+			alert(data);
+		});
+	}
+</script>
+</body>
+</html>

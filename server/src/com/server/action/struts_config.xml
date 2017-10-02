@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+"-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+"http://struts.apache.org/dtds/struts-2.0.dtd" >
+<!-- struts2的核心配置文件，在应用部署时加载并解析 -->
+<struts>
+	<package name="systempackage" extends="struts-default">
+	
+		<action name="device" class="configAction" method="device">	
+		</action>
+		<action name="position" class="configAction" method="position">	
+		</action>
+		<action name="address" class="configAction" method="address">	
+		</action>
+		<action name="hostip" class="configAction" method="hostip">
+		</action>
+		<action name="config" class="configAction" method="config">
+			<result name="success" type="redirect">
+			main.jsp
+			</result>
+		</action>
+	</package>
+</struts>

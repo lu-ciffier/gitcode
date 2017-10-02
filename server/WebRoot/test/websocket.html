@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>websocket.html</title>
+
+
+<!--<link rel="stylesheet" type="text/css" href="./styles.css">-->
+<script type="text/javascript" src="javascript/jquery-1.8.2.js"></script>
+<style type="text/css">
+	 
+        #console-container {
+           
+            width: 400px;
+        }
+
+        #message {
+            border: 1px solid #CCCCCC;
+            border-right-color: #999999;
+            border-bottom-color: #999999;
+            height: 170px;
+            overflow-y: scroll;
+            padding: 5px;
+            width: 100%;
+        }
+</style>
+<script type="text/javascript">
+
+	var ws = null;
+	var url = "ws://localhost:8080/server/websocket/test";
+	//判断当前浏览器是否支持WebSocket
+	function connect(){
+		
+	if ('WebSocket' in window) {
+        ws = new WebSocket(url);
+    } else if ('MozWebSocket' in window) {
+        ws = new MozWebSocket(url);
+    } else {
+        alert('WebSocket is not supported by this browser.');
+        return;
+    }
+		//建立连接成功的回调函数
+		ws.onopen = function() {
+			log("Info:websocket connect is open");
+		};
+		//接收到消息的回调函数
+		ws.onmessage = function(evt) {
+			//log("received:"+evt.data);
+			/* var reader = new FileReader();  
+	        reader.onload = function(evt){  
+	            if(evt.target.readyState == FileReader.DONE){  
+	                var url = evt.target.result;  
+	                document.getElementById('img').src=url;
+	            }  
+	        };  
+	        reader.readAsDataURL(evt.data); */
+			if(evt.data!=null){
+				$("#img").attr("src","data:image/png;base64,"+evt.data);
+				//alert(data);
+			}
+		};
+		//连接发生错误的回调方法
+		ws.onerror = function() {
+			log("error");
+		}; 
+		//连接关闭的回调函数
+		ws.onclose = function(evt) {
+			log("Info:websocket connect is closed");
+		};
+		
+	}
+	//监听窗口关闭事件，当窗口关闭时，主动去关闭websocket连接，防止连接还没断开就关闭窗口，server端会抛异常。
+	window.onbeforeunload = function() {
+		ws.send("closecamera");
+		ws.close();
+	};
+	/* window.onunload = function(){
+		ws.close();
+	}; */
+	//将消息显示在网页上
+	function log(message) {
+		document.getElementById('message').innerHTML += message + '<br/>';
+	}
+	//关闭连接
+	function closeWebSocket() {
+		ws.send("closecamera");
+		ws.close();
+		$("#img").attr("src","data:image/png;base64,");
+	}
+	//发送消息
+	function send() {
+		 if (ws != null) {
+			 var message = document.getElementById('text').value;
+			 ws.send(message);
+         } else {
+             alert('WebSocket connection not established, please connect.');
+         }
+	}
+</script>
+
+</head>
+
+<body>
+	Welcome	<br />
+	<button onclick="connect();">Connect</button><br>
+	<input id="text" type="text" /><br>
+	<button onclick="send();">Send</button>
+	<button onclick="closeWebSocket();">Close</button>
+	<div id="console-container">
+        <div id="message"></div>
+    </div>
+    <div style="width:640;height: 480">
+    	<!-- <img id="img" alt="camera" src="video.action"> -->
+    </div>
+    <img id="img" alt="image" src="" width="320" height="240">
+</body>
+</html>

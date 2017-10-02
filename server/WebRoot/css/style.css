@@ -1,0 +1,17 @@
+@CHARSET "UTF-8";
+/* 没有分页前是56%的宽度*/
+
+table td{
+	
+	width: 52%;
+	border-width: 2px;
+	margin-top: 20px;
+	
+}
+center {
+	padding-top:40px;
+}
+hr {
+	border-color: black;
+	-webkit-border-radius:10px;
+}

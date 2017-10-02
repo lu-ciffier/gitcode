@@ -1,0 +1,107 @@
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+	<script type="text/javascript" src="javascript/jquery-1.8.2.js"></script>
+	<style type="text/css">
+	#nav{
+		width: 20%;
+		height: 100%;	
+		float: left;
+		border: 2px;
+		
+	}
+	#nav ul li{
+		margin-top: 20%;
+	}
+	#allmap {
+		width: 80%;
+		height: 100%;
+		overflow: hidden;
+		margin:0;		
+		font-family:"微软雅黑";		
+		float: right;
+	}
+	</style>
+	<script type="text/javascript" 
+	src="http://api.map.baidu.com/api?v=2.0&ak=0h3afm4NBtCbAI36ENai6zGhU9G6nGpd">
+	</script>
+
+	<title>浏览器定位</title>
+</head>
+<body>
+	<div id="dbody">
+	<div id="nav">
+		<ul>
+			<li><a href="#" onclick="go(this)">西南大学南校区</a></li>
+			<li><a href="#" onclick="go(this)">西南大学北校区</a></li>
+			<li><a href="#" onclick="go(this)">歇马镇</a></li>
+		</ul>
+	</div>
+	<div id="allmap"></div>
+	</div>
+</body>
+</html>
+<script type="text/javascript">
+	// 百度地图API功能
+	var map = new BMap.Map("allmap");
+	var point = new BMap.Point(106.423912,29.820114);
+	map.centerAndZoom(point,12);
+	
+	/* var geolocation = new BMap.Geolocation();
+	geolocation.getCurrentPosition(function(r){
+		if(this.getStatus() == BMAP_STATUS_SUCCESS){
+			//var mk = new BMap.Marker(r.point);
+			//map.addOverlay(mk);
+			//map.panTo(r.point);
+			//alert('您的位置：'+r.point.lng+','+r.point.lat);
+			map.centerAndZoom(r.point,12);
+		}
+		else {
+			alert('failed'+this.getStatus());
+		}        
+	},{enableHighAccuracy: true}); */
+	var point1 = new BMap.Point(106.423912,29.820114);
+	var point2 = new BMap.Point(106.436722,29.833041);
+	var point3 = new BMap.Point(106.379958,29.778191);
+	var mk1 = new BMap.Marker(point1);
+	var mk2 = new BMap.Marker(point2);
+	var mk3 = new BMap.Marker(point3);
+	map.addOverlay(mk1);
+	map.addOverlay(mk2);
+	map.addOverlay(mk3);
+	var opts1 = {
+	  width : 150,     // 信息窗口宽度
+	  height: 50,     // 信息窗口高度
+	  title : "西南大学南校区温室" // 信息窗口标题
+	}
+	var opts2 = {
+	  width : 150,     // 信息窗口宽度
+	  height: 50,     // 信息窗口高度
+	  title : "西南大学北校区温室" // 信息窗口标题	  
+	}
+	var opts3 = {
+	  width : 150,     // 信息窗口宽度
+	  height: 50,     // 信息窗口高度
+	  title : "歇马镇温室"// 信息窗口标题	 
+	}
+	var infoWindow1 = new BMap.InfoWindow("", opts1);  // 创建信息窗口对象 
+	var infoWindow2 = new BMap.InfoWindow("", opts2);  // 创建信息窗口对象 
+	var infoWindow3 = new BMap.InfoWindow("", opts3);  // 创建信息窗口对象 
+	mk1.addEventListener("mouseover", function(){          
+		map.openInfoWindow(infoWindow1,point1); //开启信息窗口
+	});
+	mk2.addEventListener("mouseover", function(){          
+		map.openInfoWindow(infoWindow2,point2); //开启信息窗口
+	});
+	mk3.addEventListener("mouseover", function(){          
+		map.openInfoWindow(infoWindow3,point3); //开启信息窗口
+	});
+	map.enableScrollWheelZoom();   //启用滚轮放大缩小，默认禁用
+	map.enableContinuousZoom();    //启用地图惯性拖拽，默认禁用
+	
+	function go(){
+		window.location.href = "home.html";	
+	}
+</script>
+

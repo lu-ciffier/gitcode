@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	http://www.springframework.org/schema/tx 
+	http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+	http://www.springframework.org/schema/aop 
+	http://www.springframework.org/schema/aop/spring-aop-3.0.xsd ">
+
+	<bean id="housePortThread" class="com.server.thread.HousePortThread" scope="singleton"		
+			init-method="init" destroy-method="closePort">
+		<property name="configDao" ref="configDao"/>
+		<property name="parameterDao" ref="parameterDao"/>
+		<property name="pointDao" ref="pointDao"/>
+		<property name="topologyDao" ref="topologyDao"/>
+		<property name="alertDao" ref="alertDao"/>
+		<property name="alertinfoDao" ref="alertinfoDao"/>
+	</bean>
+	<bean id="weatherPortThread" class="com.server.thread.WeatherPortThread" scope="singleton"		
+			init-method="init" destroy-method="closePort">
+		<property name="configDao" ref="configDao"/>
+		<property name="weatherDao" ref="weatherDao"/>
+	</bean>
+	<bean id="appSocket" class="com.server.thread.AppSocket" scope="singleton">
+		<property name="userAction" ref="userAction"/>
+		<property name="housePortThread" ref="housePortThread"/>
+		<property name="weatherPortThread" ref="weatherPortThread"/>
+		<property name="realDataAction" ref="realDataAction"/>
+		<property name="historyParameterAction" ref="historyParameterAction"/>
+		<property name="configAction" ref="configAction"/>
+	</bean>
+	<bean id="clientSocket" class="com.server.thread.ClientSocket" scope="singleton">
+		<property name="parameterDao" ref="parameterDao"/>
+		<property name="pointDao" ref="pointDao"/>
+		<property name="topologyDao" ref="topologyDao"/>
+		<property name="alertDao" ref="alertDao"/>
+		<property name="alertinfoDao" ref="alertinfoDao"/>
+	</bean>
+	<!-- <bean id="cameraSocket" class="com.server.thread.CameraSocket" scope="prototype">
+		<property name="cVideo" ref="cameraVedeo"/>
+	</bean> -->
+	<!-- <bean id="cameraVedeo" class="com.server.other.CameraVideo" scope="singleton">
+		
+	</bean> -->
+	
+	
+	<bean id="userAction" class="com.server.action.UserAction" scope="prototype">
+		<property name="userService" ref="userService"/>
+		<property name="realDataAction" ref="realDataAction"/>
+	</bean>
+	<bean id="historyParameterAction" class="com.server.action.HistoryParameterAction" scope="prototype">
+		<property name="parameterService" ref="parameterService"/>
+	</bean>
+	<bean id="weatherAction" class="com.server.action.WeatherAction" scope="prototype">
+	    <property name="weatherService" ref="weatherService"/>
+	</bean>
+	<bean id="dispatherAction" class="com.server.action.DispatherAction" scope="prototype"></bean>
+	<bean id="manageAction" class="com.server.action.ManageAction" scope="prototype">
+		<property name="userService" ref="userService"/>
+		<property name="parameterService" ref="parameterService"/>
+	</bean>
+	<bean id="portlistAction" class="com.server.action.PortlistAction" scope="prototype">
+		<property name="portThread" ref="housePortThread"/>
+	</bean>
+	<bean id="configAction" class="com.server.action.ConfigAction" scope="prototype">
+		<property name="configService" ref="configService"/>
+		<property name="deviceService" ref="deviceService"/>
+		<property name="parameterService" ref="parameterService"/>
+		<property name="weatherService" ref="weatherService"/>
+	</bean>
+	<bean id="realDataAction" class="com.server.action.RealDataAction">
+		<property name="portThread" ref="housePortThread"/>
+		<property name="pointService" ref="pointService"/>
+	</bean>
+	<bean id="topologyAction" class="com.server.action.TopologyAction" scope="prototype">
+		<property name="topologyService" ref="topologyService"/>
+		<property name="parameterService" ref="parameterService"/>
+	</bean>
+	<bean id="cameravideoAction" class="com.server.action.CameraVideoAction" scope="singleton">
+		
+	</bean>
+	<bean id="cameraAction" class="com.server.action.CameraAction" scope="singleton">
+		
+	</bean>
+	<bean id="chartAction" class="com.server.action.ChartAction" scope="prototype">
+		<property name="chartService" ref="chartService"/>
+	</bean>
+	<bean id="alertAction" class="com.server.action.AlertAction" scope="prototype">
+		<property name="alertService" ref="alertService"/>
+	</bean>
+	<bean id="alertinfoAction" class="com.server.action.AlertinfoAction" scope="prototype">
+		<property name="alertinfoService" ref="alertinfoService"/>
+	</bean>
+	<bean id="clientSocketAction" class="com.server.action.ClientSocketAction" scope="prototype">
+		<property name="clintSocket" ref="clientSocket"/>
+		<property name="pointService" ref="pointService"/>
+	</bean>
+	
+	
+	<bean id="userService" class="com.server.service.UserServiceImpl" scope="singleton">
+		<property name="userDao" ref="userDao"/>
+	</bean>
+	<bean id="configService" class="com.server.service.SystemServiceImpl" scope="singleton">
+		<property name="configDao" ref="configDao"/>
+	</bean>
+	<bean id="pointService" class="com.server.service.PointServiceImpl" scope="singleton">
+		<property name="pointDao" ref="pointDao"/>
+	</bean>
+	<bean id="topologyService" class="com.server.service.TopologyServiceImpl" scope="singleton">
+		<property name="topologyDao" ref="topologyDao"/>
+	</bean>
+	<bean id="parameterService" class="com.server.service.ParameterServiceImpl" scope="singleton">
+		<property name="parameterDao" ref="parameterDao"/>
+	</bean>
+	<bean id="weatherService" class="com.server.service.WeatherServiceImpl" scope="singleton">
+	    <property name="weatherDao" ref="weatherDao"/>
+	</bean>
+	<bean id="deviceService" class="com.server.service.DeviceServiceImpl" scope="singleton">
+		<property name="deviceDao" ref="deviceDao"/>
+	</bean>
+	<bean id="chartService" class="com.server.service.ChartServiceImpl" scope="singleton">
+		<property name="chartDao" ref="chartDao"/>
+	</bean>
+	<bean id="alertService" class="com.server.service.AlertServiceImpl" scope="singleton">
+		<property name="alertDao" ref="alertDao"/>
+	</bean>
+	<bean id="alertinfoService" class="com.server.service.AlertinfoServiceImpl" scope="singleton">
+		<property name="alertinfoDao" ref="alertinfoDao"/>
+	</bean>
+	
+	
+	<bean id="userDao" class="com.server.dao.UserDaoImpl" scope="singleton">
+		<property name="hibernateTemplate" ref="hibernateTemplate"/>
+	</bean>
+	<bean id="configDao" class="com.server.dao.SystemConfigDaoImpl" scope="singleton">
+		<property name="hibernateTemplate" ref="hibernateTemplate"/>
+	</bean>
+	<bean id="pointDao" class="com.server.dao.PointDaoImpl" scope="singleton">
+		<property name="hibernateTemplate" ref="hibernateTemplate"/>
+	</bean>
+	<bean id="topologyDao" class="com.server.dao.TopologyDaoImpl" scope="singleton">
+		<property name="hibernateTemplate" ref="hibernateTemplate"/>
+	</bean>
+	<bean id="parameterDao" class="com.server.dao.ParameterDaoImpl" scope="singleton">
+		<property name="hibernateTemplate" ref="hibernateTemplate"/>
+	</bean>
+	<bean id="weatherDao" class="com.server.dao.WeatherDaoImpl">
+	    <property name="hibernateTemplate" ref="hibernateTemplate"/>
+	</bean>
+	<bean id="deviceDao" class="com.server.dao.DeviceDaoImpl" scope="singleton">
+		<property name="hibernateTemplate" ref="hibernateTemplate"/>
+	</bean>
+	<bean id="chartDao" class="com.server.dao.ChartDaoImpl" scope="singleton">
+		<property name="hibernateTemplate" ref="hibernateTemplate"/>
+	</bean>
+	<bean id="alertDao" class="com.server.dao.AlertDaoImpl" scope="singleton">
+		<property name="hibernateTemplate" ref="hibernateTemplate"/>
+	</bean>
+	<bean id="alertinfoDao" class="com.server.dao.AlertinfoDaoImpl" scope="singleton">
+		<property name="hibernateTemplate" ref="hibernateTemplate"/>
+	</bean>
+	
+	
+	<bean id="sessionFactory"
+		class="org.springframework.orm.hibernate3.LocalSessionFactoryBean" >
+		<property name="configLocation"
+			value="classpath:hibernate.cfg.xml">
+		</property>
+	</bean>
+	<bean id="transactionManager"
+		class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+	<bean id="hibernateTemplate" scope="singleton"
+	class="org.springframework.orm.hibernate3.HibernateTemplate">
+		<property name="sessionFactory" ref="sessionFactory"/>
+	</bean>
+	
+	<tx:advice id="advice" transaction-manager="transactionManager">
+		<tx:attributes>
+			<tx:method name="*" propagation="REQUIRED"/>
+		</tx:attributes>
+	</tx:advice>
+	<aop:config>		
+		<aop:pointcut id="pointcut"
+		expression="execution(public * com.server.dao.*.*(..))" />	
+		<!-- <aop:advisor advice-ref="advice" pointcut-ref="pointcut" />	 -->
+		<aop:advisor advice-ref="advice" pointcut-ref="pointcut"/>		 
+	</aop:config>
+</beans>

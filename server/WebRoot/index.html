@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>远程温室数据监测系统</title>
+	<meta name="viewport" content="width=device-width,initial-scale=1"charset="UTF-8">
+	<script type="text/javascript" src="javascript/jquery-1.8.2.js"></script>
+	<script type="text/javascript" src="javascript/jquery.mobile-1.4.5.js"></script>
+	<link rel="stylesheet" href="css/jquery.mobile-1.4.5.min.css">
+	<link rel="stylesheet" type="text/css" href="css/index.css">
+	<style type="text/css">
+	.fullshow {
+		white-space: normal !important;
+	}
+	</style>
+	<script type="text/javascript">
+		$.mobile.ajaxEnabled = false;		
+	</script>
+</head>
+<body>
+	<div data-role="header" data-fullscreen="true">
+	<h1 class="fullshow">欢迎使用温室数据系统</h1>
+	</div>	
+	<h3>用户请登陆</h3>
+	<form action="login.action" method="post" id="login">
+		<table>
+			<tr>
+				<td>
+					<img alt="user" src="img/user32.png">UserId
+				</td>
+				<td>
+					<input type="text" name="username" maxlength="10"
+					placeholder="Username" />
+				</td>
+				
+			</tr>
+			<tr>
+				<td>
+					<img alt="password" src="img/password32.png">PassWord
+				</td>
+				<td>
+					<input type="password" name="password" maxlength="6"
+					placeholder="Password" />
+				</td>
+			
+			</tr>
+			<tr hidden="hidden"><td><input type="text" name="platform" value="web"/></td></tr>
+			<tr>
+				<td>
+					<input type="submit" value="登陆" />
+				</td>
+				<td>
+					<input type="button" value="注册" />
+				</td>
+
+			</tr>
+		</table>
+	</form>
+<script type="text/javascript">
+	$(":button").click(function(){
+		window.location.href = "regist.html?time="+ new Date().getTime();
+	});
+</script>
+</body>
+</html>

@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>系统参数设置</title>
+<meta name="viewport" content="width=device-width,initial-scale=1"
+	charset="UTF-8">
+<script type="text/javascript" src="javascript/jquery-1.8.2.js"></script>
+<script type="text/javascript" src="javascript/jquery.mobile-1.4.5.js"></script>
+<script type="text/javascript" src="javascript/config.js"></script>
+<link rel="stylesheet" href="css/jquery.mobile-1.4.5.min.css">
+<link rel="stylesheet" type="text/css" href="css/config.css">
+<script type="text/javascript">
+		$.mobile.ajaxEnabled = false;		
+</script>
+</head>
+<body>
+
+	<div data-role="navbar" class="nav" data-theme='a'>
+
+		<ul id="navlist">
+			<li><a href="" id="a1" onclick="edit(this)">串口</a></li>
+
+			<li><a href="" id="a2" onclick="edit(this)">位置</a></li>
+
+			<li><a href="" id="a3" onclick="edit(this)">警报</a></li>
+
+			<li><a href="" id="a4" onclick="edit(this)">用户</a></li>
+		</ul>
+	</div>
+	
+	<fieldset id="portconfig" style="display: none;">
+		<legend>通信设置</legend>
+		<div class="control">
+			类  型:<select id="type" name="type" data-inline="true">
+				<option>house</option>
+				<option>weather</option>
+			</select>
+		</div>
+		<div class="control">
+			串口号:<select id="port" name="port" data-inline="true"></select>
+		</div>
+		<div>
+			波特率:<select id="botelv" name="botelv" data-inline="true">				
+				<option>9600</option>
+				<option>19200</option>
+				<option>38400</option>
+				<option>57600</option>
+			</select>
+		</div>
+		<div>
+			<input type="button" value="提交" onclick="save()" data-inline="true">
+			<input type="button" value="取消" data-inline="true"
+				onclick="$('#portconfig').attr('style', 'display:none;');">
+		</div>
+	</fieldset>
+
+	<fieldset id="positionconfig" style="display: none;">
+		<legend>设备坐标设置</legend>
+		<div class="control">
+			设备类型:<input type="text" id="name" data-inline="true"
+				placeholder="请输入设备型号：" required="required" />
+		</div>
+		<div class="control">
+			设备地址:<input type="text" id="address" data-inline="true"
+				placeholder="请输入设备的IEEE地址：" required="required" />
+		</div>
+		<div class="control">
+			X坐标:<input type="text" id="xposition" data-inline="true"
+				placeholder="请输入X坐标值：" required="required" />
+		</div>
+		<div class="control">
+			Y坐标:<input type="text" id="yposition" data-inline="true"
+				placeholder="请输入Y坐标值：" required="required" />
+		</div>
+		<div class="control">
+			Z坐标:<input type="text" id="zposition" data-inline="true"
+				placeholder="请输入Z坐标值：" required="required" />
+		</div>
+		<div>
+			<input type="button" value="提交" onclick="insert()" data-inline="true">
+			<input type="button" value="取消" data-inline="true"
+				onclick="$('#positionconfig').attr('style', 'display:none;');">
+		</div>
+	</fieldset>
+
+	<fieldset id="alertconfig" style="display: none;">
+		<legend>警报设置</legend>
+		<div>
+			警报命名：<input type="text" id="alertname" onblur="checkalert()"
+				placeholder="请输入警报名称：" required="required" />
+		</div>
+		<div id="choosepoint" data-role="fieldcontain">
+			选择节点: <select id="pointtype" data-inline="true">
+				<option value="7E9F3E01004B1200">7E</option>
+				<option value="259F3E01004B1200">25</option>
+				<option value="409E3E01004B1200">40</option>
+				<option value="2A9F3E01004B1200">2A</option>
+				<option value="469E3E01004B1200">46</option>
+				<option value="0300000000000000">03</option>
+			</select>
+		</div>
+		<div id="choosedata">
+			选择数据类型：<select id="datatype" data-inline="true">
+				<option value="1">空气温度</option>
+				<option value="2">空气湿度</option>
+				<option value="3">光照强度</option>
+				<option value="4">二氧化碳浓度</option>
+				<option value="5">土壤温度</option>
+				<option value="6">土壤湿度</option>
+				<option value="7">工作电压</option>
+			</select>
+		</div>
+		<div id="setthreshold">
+			min：<input type="number" id="min" placeholder="请输入最小值："
+				required="required" /> max:<input type="number" id="max"
+				placeholder="请输入最大值：" required="required" />
+		</div>
+		<div>
+			<button data-inline="ture" onclick="savealert()">保存</button>
+			<button data-inline="ture" onclick="configalert()">管理</button>
+		</div>
+	</fieldset>
+
+	<fieldset id="deletealert" style="display: none;">
+		<legend>警报管理</legend>
+		<div id="choosedeletealert" data-role="fieldcontain">
+			<table>
+				<thead>
+					<tr>
+						<th>选择</th>
+						<th>警报名称</th>
+						<th>信息</th>
+					</tr>
+				</thead>
+				<tbody id="deletealerttbody">
+
+				</tbody>
+			</table>
+		</div>
+
+		<div>
+			<button data-inline="ture" onclick="deletealert()">删除</button>
+			<button data-inline="ture"
+				onclick="$('#deletealert').attr('style', 'display:none;');">取消</button>
+		</div>
+	</fieldset>
+
+	<fieldset id="userconfig" style="display: none;">
+		<legend>自助用户服务</legend>
+		<div class="control">
+			<input type="button" id="username" value="用户ID" />
+		</div>
+		<div class="control">
+			<input type="button" id="password" value="用户密码" />
+		</div>
+		<div class="control">
+			<input type="button" id="level" value="用户级别" />
+		</div>
+		<div class="control">
+			<input type="button" id="registdate" value="注册时间" />
+		</div>
+
+		<div>
+			<input type="button" value="修改密码" onclick="updateP"
+				data-inline="true"> 
+			<input type="button" value="取消" data-inline="true"
+				onclick="$('#userconfig').attr('style', 'display:none;');">
+		</div>
+	</fieldset>
+
+
+</body>
+</html>

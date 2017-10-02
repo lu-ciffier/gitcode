@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width,initial-scale=1" 
+    charset="UTF-8">
+    <script src="javascript/three.js"></script>
+    <script src="javascript/stats.min.js"></script>
+    <script src="javascript/Detector.js"></script>
+    <script src="javascript/TrackballControls.js"></script>
+    <script src="javascript/CanvasRenderer.js"></script>
+    <script src="javascript/Projector.js"></script>
+    <script type="text/javascript" src="javascript/jquery-1.8.2.js"></script>
+    <title>3D拓扑</title>
+    <style>
+        body {
+            font-family: Monospace;
+            background-color: #f0f0f0;
+            margin: 0px;
+            overflow: hidden;
+            
+        }
+        #controls {
+            position: absolute;
+            text-align:left;
+            top: 40px;
+            left: 5px;
+            padding: 5px;
+            margin: auto;
+        }
+
+        .control {
+            margin-bottom: 3px;
+        }
+    </style>
+
+</head>
+<body>
+
+<div id="container">
+    <div id="info"></div>
+    <fieldset id="controls">
+        <legend>节点数据</legend>
+        <div class="control">
+            温室序号：<select onchange="setwrapS(this)">
+            <option value="1">01</option>
+            <option value="2">02</option>
+            <option value="3">03</option>
+        </select>
+        </div>
+        <div class="control">
+            节点序号：<input id="id" type="text" value="0" />
+        </div>
+        <div class="control">
+            空气温度：<input id='atemp' type="text" value="0" />
+        </div>
+        <div class="control">
+            空气湿度：<input id='ahim' type="text" value="0" />
+        </div>
+        <div class="control">
+            土壤温度：<input id='stemp' type="text" value="0"  />
+        </div>
+        <div class="control">
+            土壤湿度：<input id='shim' type="text" value="0"   />
+        </div>
+        <div class="control">
+            光照强度：<input id='ill' type="text" value="0"  />
+        </div>
+        <div class="control">
+            Co2 浓度：<input id='co2' type="text" value="0"   />
+        </div>
+        <div class="control">
+            网关电压：<input id='vol' type="text" value="0.0"  />
+        </div>
+    </fieldset>
+</div>
+<script type="text/javascript">
+    if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
+    var container, stats, info;
+    var camera, controls, scene, renderer;
+    var cross;
+
+    var raycaster;
+    var mouse;
+    var objects = [];
+    var pointdata;
+    var d = null;
+    init();
+    animate();
+
+    function init() {
+        //container = document.createElement( 'div' );
+        //document.body.appendChild( container );
+        container = document.getElementById('container');
+        //var info = document.createElement( 'div' );
+        var info = document.getElementById('info');
+        info.style.position = 'absolute';
+        info.style.top = '10px';
+        info.style.width = '100%';
+        info.style.textAlign = 'center';
+        info.innerHTML = '按住鼠标左键可以对温室视角变换，右键可以拖动温室<br>'+
+       				' 其中红色不透明方体为网关，其他半透明方体为节点，可单击查看详细数据！<br>';
+
+        container.appendChild( info );
+
+        camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 1e10 );
+        camera.position.x = 10;
+        camera.position.y = -200;
+        camera.position.z = 400;
+        controls = new THREE.TrackballControls( camera );
+
+        controls.rotateSpeed = 2.0;
+        controls.zoomSpeed = 2;
+        controls.panSpeed = 2;
+
+        controls.noZoom = false;
+        controls.noPan = false;
+
+        controls.staticMoving = true;
+        controls.dynamicDampingFactor = 0.3;
+
+        scene = new THREE.Scene();
+        scene.add( camera );
+
+        // light
+        var dirLight = new THREE.AmbientLight( 0xffffff );
+        camera.add( dirLight );
+// A begin
+        var size = 100;
+        var geometry = house(size);
+
+        geometry.computeLineDistances();
+        //var material = new THREE.MeshLambertMaterial( { color:0xffffff} );
+        var material = new THREE.LineDashedMaterial( { color: 0xffaa00, dashSize: 3, gapSize: 1, linewidth: 3 } );
+        var object = new THREE.LineSegments( geometry, material );
+        scene.add(object);
+        topology();
+        //topology
+        function topology(){
+        	
+           	$.post("topology.action", function(data) {
+        		if ($.trim(data) != "") {
+        			//alert(data);
+        			d = eval('(' + data + ')');
+        			var root = d["root"];
+        			gateway(150,0,50,root.substring(0, 2));
+        			var Child = d[root];
+        			drawpoint(150,0,20,Child);     			
+        		}
+        	});
+        }
+        //point(-100,20,10,'123456');
+
+// A end
+
+        raycaster = new THREE.Raycaster();
+        mouse = new THREE.Vector2();
+        // renderer
+        renderer = new THREE.CanvasRenderer();
+        renderer.setClearColor( 0xeeeeee, 1 );
+
+        renderer.setSize( window.innerWidth, window.innerHeight );
+
+
+        container.appendChild( renderer.domElement );
+
+        stats = new Stats();
+        stats.domElement.style.position = 'absolute';
+        stats.domElement.style.top = '0px';
+        stats.domElement.style.right = '0px';
+        container.appendChild( stats.domElement );
+        //
+        window.addEventListener( 'resize', onWindowResize, false );
+        document.addEventListener('mousedown',onDocumentMouseDown,false);
+        document.addEventListener( 'touchstart', onDocumentTouchStart, false );
+
+    }
+    /**
+     * 绘制网关模型
+     * **/
+    function gateway(x,y,z,data){
+        var geometry = new THREE.BoxGeometry( 15, 10, 5);
+
+        var material = new THREE.MeshBasicMaterial( { color:0xff0000,text:data} );
+        var point = new THREE.Mesh( geometry, material );
+        point.position.set(x,y,z);
+        scene.add(point);       
+    }
+    /**
+     * 绘制节点模型
+     * **/
+     function drawpoint(x,y,z,father){
+    	 var childs = father.split(",");
+			for(var i=0;i<childs.length;i++){
+				var child = childs[i];
+				var quality = child.substring(16);
+				var px = x-Math.random()*quality-50;
+				if(px<-150){
+					px = x-Math.random()*quality-50;
+				}
+				var py = Math.random()*quality-50;
+				if(py<-100||py>100){
+					py = Math.random()*quality+50;
+				}
+				var pz = Math.random()*quality;
+				if(pz>=50){
+					pz = Math.random()*quality;
+				}
+				point(px,py,pz,child.substring(0, 16));
+				var hasChild = d[child.substring(0, 16)];
+		 		if (hasChild != null) {
+		 			drawpoint(px,py,pz,hasChild);
+		 		} 
+			}
+     }
+    function point(x,y,z,data){
+        var geometry = new THREE.BoxGeometry( 15, 10, 5);
+        var material = new THREE.MeshBasicMaterial( { color:0xffffff*Math.random(),opacity: 0.5,text:data} );
+        var mesh = new THREE.Mesh( geometry, material ); 
+        mesh.position.set(x,y,z);
+        scene.add(mesh);
+        objects.push(mesh);
+    }
+    /**
+     * 绘制温室模型
+     * **/
+    function house( size ) {
+
+        var x = size * 1.5;
+        var y = size * 1;
+        var z = size * 0.5;
+
+        var geometry = new THREE.Geometry();
+
+        geometry.vertices.push(
+                new THREE.Vector3( -x, -y, -z ),
+                new THREE.Vector3( -x, y, -z ),
+
+                new THREE.Vector3( -x, y, -z ),
+                new THREE.Vector3( x, y, -z ),
+
+                new THREE.Vector3( x, y, -z ),
+                new THREE.Vector3( x, -y, -z ),
+
+                new THREE.Vector3( x, -y, -z ),
+                new THREE.Vector3( -x, -y, -z ),
+
+
+                new THREE.Vector3( -x, -y, z ),
+                new THREE.Vector3( -x, y, z ),
+
+                new THREE.Vector3( -x, y, z ),
+                new THREE.Vector3( x, y, z ),
+
+                new THREE.Vector3( x, y, z ),
+                new THREE.Vector3( x, -y, z ),
+
+                new THREE.Vector3( x, -y, z ),
+                new THREE.Vector3( -x, -y, z ),
+
+                new THREE.Vector3( -x, -y, -z ),
+                new THREE.Vector3( -x, -y, z ),
+
+                new THREE.Vector3( -x, y, -z ),
+                new THREE.Vector3( -x, y, z ),
+
+                new THREE.Vector3( x, y, -z ),
+                new THREE.Vector3( x, y, z ),
+
+                new THREE.Vector3( x, -y, -z ),
+                new THREE.Vector3( x, -y, z )
+        );
+
+        return geometry;
+
+    }
+
+    function onWindowResize() {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize( window.innerWidth, window.innerHeight );
+        controls.handleResize();
+    }
+    function onDocumentTouchStart( event ) {
+
+        event.preventDefault();
+
+        event.clientX = event.touches[0].clientX;
+        event.clientY = event.touches[0].clientY;
+        onDocumentMouseDown( event );
+
+    }
+    function onDocumentMouseDown( event ) {
+
+        event.preventDefault();
+
+        mouse.x = ( event.clientX / renderer.domElement.clientWidth ) * 2 - 1;
+        mouse.y = - ( event.clientY / renderer.domElement.clientHeight ) * 2 + 1;
+
+        raycaster.setFromCamera( mouse, camera );
+        var intersects = raycaster.intersectObjects( objects );
+        if ( intersects.length > 0 ) {
+            //intersects[ 0 ].object.material.color.setHex( Math.random() * 0xffffff );
+            var data = intersects[ 0 ].object.material.text;
+            //alert(data);
+            var para={'point':data};
+            $.post("topologyparameter.action", para ,function(data) {
+        		if ($.trim(data) != "") {
+        			//alert(data);
+        			var d = eval('(' + data + ')');
+        			var id = document.getElementById('id');
+                    id.setAttribute('value',d['point']);
+                    var atemp = document.getElementById('atemp');
+                    atemp.setAttribute('value',d['airT']);
+                    var ahim = document.getElementById('ahim');
+                    ahim.setAttribute('value',d['airH']);
+                    var stemp = document.getElementById('stemp');
+                    stemp.setAttribute('value',d['soilT']);
+                    var shim = document.getElementById('shim');
+                    shim.setAttribute('value',d['soilH']);
+                    var co2 = document.getElementById('co2');
+                    var c = d['co2'];
+                    if(c<=0){
+                    	c = '不含该测试项';
+                    }
+                    co2.setAttribute('value',c);
+                    var ill = document.getElementById('ill');
+                    var i = d['ill'];
+                    if(i<=0){
+                    	i = '不含该测试项';
+                    }
+                    ill.setAttribute('value',i);
+                    var vol = document.getElementById('vol');
+                    vol.setAttribute('value',d['voltage']);
+        		}
+        	});
+            
+        }
+
+    }
+    function animate() {
+        requestAnimationFrame( animate );
+        controls.update();
+        renderer.render( scene, camera );
+        stats.update();
+    }
+</script>
+</body>
+</html>

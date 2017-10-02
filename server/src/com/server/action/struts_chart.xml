@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+"-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+"http://struts.apache.org/dtds/struts-2.0.dtd" >
+<!-- struts2的核心配置文件，在应用部署时加载并解析 -->
+<struts>
+	<package name="chartpackage" extends="struts-default">
+	
+		<action name="savechart" class="chartAction" method="save">	
+		</action>
+		<action name="loadchart" class="chartAction" method="load">	
+		</action>
+		<action name="deletechart" class="chartAction" method="delete">	
+		</action>
+	</package>
+</struts>

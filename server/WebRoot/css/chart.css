@@ -1,0 +1,79 @@
+@CHARSET "UTF-8";
+
+body {
+	text-align: center;
+}
+.ui-overlay-a,.ui-page-theme-a,.ui-page-theme-a .ui-panel-wrapper {
+	background-color: #88B8F7;
+	text-align: center;
+}
+table {
+	margin: auto;
+	padding: 0.5%;
+	/* border-color: black;
+	border-style: solid; */
+	border-collapse: collapse;
+	width: 100%;
+	text-align: center;
+	font-size: 2px;
+}
+img {
+	border-style: groove;
+	border-width: 5px;
+	
+	margin: 5px;
+}
+td,th {
+	text-align: center;
+}
+
+input {
+	background-color: #43a2e2;
+	border-style: outset;
+}
+
+p {
+	font-family: fantasy;
+	font-size: 1.5em;
+}
+
+.table-title {
+	font-size: 2px;
+	color: red;
+}
+
+#chartmenu a {
+	text-decoration: none;
+}
+
+#newchart {
+	width: 50%;
+	height: auto;
+	margin-top: 3%;
+	border-style: solid;
+	border-width: 2px;
+}
+
+#loadchart {
+	width: 50%;
+	height: auto;
+	margin-top: 3%;
+	border-style: solid;
+	border-width: 2px;
+}
+
+#savechart {
+	width: 50%;
+	height: auto;
+	margin-top: 3%;
+	border-style: solid;
+	border-width: 2px;
+}
+
+#deletechart {
+	width: 50%;
+	height: auto;
+	margin-top: 3%;
+	border-style: solid;
+	border-width: 2px;
+}

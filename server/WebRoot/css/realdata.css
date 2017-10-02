@@ -1,0 +1,46 @@
+@CHARSET "UTF-8";
+
+body {
+	text-align: center;
+}
+table {
+	margin: auto;
+	padding: 0.5%;
+	border-color: black;
+	border-style:solid;
+	border-collapse:collapse;
+	width:80%;
+	text-align: center;
+	font-size: 2px;
+	
+}
+td,th{
+	text-align: center;
+}
+#tstate {
+	height: 15%;
+	margin-top:5%;
+		
+}
+#tpoint {
+	border-top-width:0;
+	
+	
+}
+#tresult {
+	border-top-width:0;	
+}
+
+hr {
+	border-color: black;
+}
+input {
+	background-color: #43a2e2;
+	border-style: outset;
+}
+p {
+	margin:auto;
+	width:auto;
+	font-family: fantasy;
+	font-size: 1.5em;	
+}

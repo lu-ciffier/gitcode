@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+"-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+"http://struts.apache.org/dtds/struts-2.0.dtd" >
+<!-- struts2的核心配置文件，在应用部署时加载并解析 -->
+<struts>
+	<package name="dispatherpackage" extends="struts-default">
+		
+		<action name="maindispather" class="dispatherAction" 
+				method="main_jsp">
+			<result name="dispather">
+			/main.jsp
+			</result>
+		</action>
+		<action name="managedispather" class="dispatherAction" 
+				method="manage_jsp">
+			<result name="dispather">
+			/manage.jsp
+			</result>
+		</action>
+		<action name="realdatadispather" class="dispatherAction" 
+				method="realdata_jsp">
+			<result name="dispather">
+			/realdata.jsp
+			</result>
+		</action>
+		<action name="historydatadispather" class="dispatherAction" 
+				method="historydata_jsp">
+			<result name="dispather">
+			/historydata.jsp
+			</result>
+		</action>
+		<action name="systemdispather" class="dispatherAction" 
+				method="system_jsp">
+			<result name="dispather">
+			/system.jsp
+			</result>
+		</action>	
+	</package>
+</struts>

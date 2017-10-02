@@ -1,0 +1,28 @@
+@CHARSET "UTF-8";
+
+body {
+	background-image:url(../img/blue_big.png);
+	background-repeat: no-repeat;
+	background-position: top,center;
+	background-color:#01529e;
+	text-align: center;
+}
+
+table {
+	margin-top:3%;
+	margin:auto;
+	width: auto;
+	border-width: 1%;
+	border-style:solid;
+	-webkit-border-radius:10px;
+}
+input {
+	background-color: #43a2e2;
+	border-style: inset;
+}
+
+h1 {
+	margin-top:10%;
+	font-family: fantasy;
+	font-size: 3em;
+}

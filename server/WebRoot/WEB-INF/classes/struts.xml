@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.1//EN" "http://struts.apache.org/dtds/struts-2.1.dtd">
+<struts>
+	<include file="com\server\action\struts_user.xml"></include>
+	<include file="com\server\action\struts_historyParameter.xml"></include>
+	<include file="com\server\action\struts_dispather.xml"></include>
+	<include file="com\server\action\struts_manage.xml"></include>
+	<include file="com\server\action\struts_config.xml"></include>
+	
+	<include file="com\server\action\struts_portlist.xml"></include>
+	<include file="com\server\action\struts_realdata.xml"></include>
+	<include file="com\server\action\struts_topology.xml"></include>
+	<include file="com\server\action\struts_cameravideo.xml"></include>
+	<include file="com\server\action\struts_chart.xml"></include>
+	<include file="com\server\action\struts_alert.xml"></include>
+	<include file="com\server\action\struts_alertinfo.xml"></include>
+	<include file="com\server\action\struts_weather.xml"></include>
+	<include file="com\server\action\struts_camera.xml"></include>
+	<include file="com\server\action\struts_clientsocket.xml"></include>
+</struts>    

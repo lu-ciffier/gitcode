@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>GreenHouse 3D</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, 
+    minimum-scale=1.0, maximum-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="css/home.css">
+      
+</head>
+
+<body>
+
+<script src="javascript/three.js"></script>
+<script src="javascript/OBJLoader.js"></script>
+<script src="javascript/MTLLoader.js"></script>
+<script src="javascript/TrackballControls.js"></script>
+<script src="javascript/jquery-1.8.2.js"></script>
+
+
+<div id="container">
+    <div id="info"></div>
+    <fieldset id="menue">
+    	<legend>操作菜单</legend>
+    	<div class="control" style="display: none;">
+           <input id="address" type="button" value="设备地址" />
+        </div>
+        <div class="control" >
+           <button id="alertinfo" onclick="menue('alertinfo')" 
+           style="display: none;">警报信息</button>
+        </div>
+        <div class="control">
+           <button id="detailinfo" onclick="menue('detailinfo')">详细信息</button>
+        </div>
+    	<div class="control">
+           <button id="singlecollect" onclick="menue('singlecollect')">单次采集</button>
+        </div>
+        <div class="control">
+           <button id="allcollect" onclick="menue('allcollect')">全部采集</button>
+        </div>
+        <div class="control">
+           <button id="singlepuase" onclick="menue('singlepuase')">单次暂停</button>
+        </div>
+        <div class="control">
+           <button id="allpuase" onclick="menue('allpuase')">全部暂停</button>
+        </div>
+        <div class="control">
+           <button id="closemenue" onclick="menue('closemenue')">关闭菜单</button>
+        </div>  
+    </fieldset>
+    <fieldset id="cameramenue">
+    	<legend>摄像头菜单</legend>
+    	<div class="control">
+           <button id="detailinfo" onclick="cameramenue('detailinfo')">详细信息</button>
+        </div>
+    	<div class="control" >
+           <button id="startphoto" onclick="cameramenue('startphoto')">开启摄像</button>
+        </div>
+        <div class="control" >
+           <button id="closephoto" onclick="cameramenue('closephoto')">关闭摄像</button>
+        </div>
+        <div class="control">
+           <button id="closemenue" onclick="cameramenue('closemenue')">关闭菜单</button>
+        </div>
+    </fieldset>
+    
+    <fieldset id="alerts">
+    	<legend>警报信息</legend>
+    	   	
+    	<div class="control" id="alertdetailinfo">
+    		
+    	</div>
+    	<div style="display: none;">
+    		<input type="text" id="alertpoint">
+    	</div>
+    	<div>
+    		<input type="button" value="好的" onclick="conformalert()"/>
+    	</div>
+    	
+    </fieldset>
+    
+    <fieldset id="controls" >
+        <legend>温室信息</legend>
+      <div class="base" id="base">
+        <div class="control">
+            温室序号：<select>
+            <option value="01" selected>01</option>
+            <option value="02" >02</option>
+            <option value="03">03</option>
+        </select>
+        <input type="button" value="收起信息" onclick="closecontrol()"/>
+        </div>
+        <div class="control">
+            设备类型：<input id="type" type="text" value="0" />
+        </div>
+        <div class="control">
+            设备地址：<input id="id" type="text" value="0" />
+        </div>
+        <div class="control">
+            工作状态：<input id="work" type="text" value="0" />
+        </div>
+      </div>
+      <div class="detail" id="detail">
+        <div class="control">
+            空气温度：<input id='atemp' type="text" value="0" />
+        </div>
+        <div class="control">
+            空气湿度：<input id='ahim' type="text" value="0" />
+        </div>
+        <div class="control">
+            土壤温度：<input id='stemp' type="text" value="0"  />
+        </div>
+        <div class="control">
+            土壤湿度：<input id='shim' type="text" value="0"   />
+        </div>
+        <div class="control">
+            光照强度：<input id='ill' type="text" value="0"  /> 
+        </div>
+        <div class="control">
+ 	Co2 浓度：<input id='co2' type="text" value="0"   /> 
+        </div>
+        <div class="control">
+            网关电压：<input id='vol' type="text" value="0.0"  />
+        </div>
+      </div>
+    </fieldset>
+    
+    <fieldset id="cameravideo">
+    	<legend>摄像头图像</legend>
+    	<!-- <div class="control" >
+           <input id="createconnect" type="button" value="open socket" onclick="connect()"/>
+           <input id="removeconnect" type="button" value="close socket" onclick="closeWebSocket()"/>
+        </div> -->
+    	<div class="control">
+    		<img id="img" alt="image" src="" width="320" height="240">
+    	</div>
+    	<div class="control">
+         	<button onclick="cameraoption(1)">拍照保存</button>
+         	<button onclick="cameraoption(2)">开始录制</button>
+         	<button onclick="cameraoption(3)">重新录制</button>
+         	<button onclick="cameraoption(4)">保存视频</button>
+         	
+        </div>
+    </fieldset>
+    <fieldset id="weatherinfo">
+    	<legend>气象站信息</legend>	
+    	<div class="control">
+            温室序号：<select>
+            <option value="01" selected>01</option>
+            <option value="02" >02</option>
+            <option value="03">03</option>
+        </select>
+        <input type="button" value="收起信息" onclick="closecontrol()"/>
+        </div>
+        <div class="control">
+            设备类型：<input id="wtype" type="text" value="0" />
+        </div>
+        <div class="control">
+            设备地址：<input id="wid" type="text" value="0" />
+        </div>
+        <div class="control">
+            工作状态：<input id="wwork" type="text" value="0" />
+        </div>
+        <div class="control">
+            室外温度：<input id='outtemp' type="text" value="0" />
+        </div>
+        <div class="control">
+            室外湿度：<input id='outhum' type="text" value="0" />
+        </div>
+        <div class="control">
+            室外风向：<input id='winddir' type="text" value="0"  />
+        </div>
+        <div class="control">
+            室外风速：<input id='windspeed' type="text" value="0"   />
+        </div>
+        <div class="control">
+            太阳辐射：<input id='solarradition' type="text" value="0"  />
+        </div>
+        <div class="control">
+ 	太阳电池：<input id='solarv' type="text" value="0"   />
+        </div>
+        <div class="control">
+            工作电压：<input id='batteryv' type="text" value="0.0"  />
+        </div>
+    </fieldset>
+</div>
+
+<!-- <script src="javascript/home.js"></script> -->
+<script src="javascript/home_socket.js"></script>
+
+</body>
+</html>

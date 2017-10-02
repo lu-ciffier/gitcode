@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>GreenHouse 3D</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, 
+    minimum-scale=1.0, maximum-scale=1.0">
+    <style>
+        body {
+            font-family: Monospace;
+            background-color: #000;
+            color: #fff;
+            margin: 0px;
+            overflow: hidden;
+        }
+        #info {
+            position: absolute;
+            top: 10px;
+            width: 100%;
+            text-align: center;
+            z-index: 100;
+            display:block;
+            color: #f00;
+            font-weight: bold;
+            text-decoration: underline;
+            cursor: pointer
+        }
+        #controls {
+            position: absolute;
+            text-align:left;
+            top: 40px;
+            left: 5px;
+            padding: 5px;
+            margin: auto;
+            color: #f00;
+            font-weight: bold;
+            display: none;
+        }
+        #menue {
+        	position: absolute;
+        	top: auto;
+        	left: auto;
+        	margin: auto;
+            color: #f00;
+            display: none;
+        }
+        #cameramenue {
+        	position: absolute;
+        	top: auto;
+        	left: auto;
+        	margin: auto;
+            color: #f00;
+            display: none;
+        }
+        .control {
+            margin-bottom: 3px;      	
+        }
+        .control input {
+        	background-color: #f56;
+        }
+        
+    </style>
+</head>
+
+<body>
+
+<script src="javascript/three.js"></script>
+<script src="javascript/OBJLoader.js"></script>
+<script src="javascript/MTLLoader.js"></script>
+<script src="javascript/TrackballControls.js"></script>
+<script src="javascript/jquery-1.8.2.js"></script>
+
+<div id="container">
+    <div id="info"></div>
+    <fieldset id="menue">
+    	<legend>操作菜单</legend>
+    	<div class="control" style="display: none;">
+           <input id="address" type="button" value="设备地址" />
+        </div>
+        <div class="control">
+           <input id="detailinfo" type="button" value="最新数据" onclick="menue('detailinfo')"/>
+        </div>
+    	<div class="control">
+           <input id="singlecollect" type="button" value="单次采集" onclick="menue('singlecollect')"/>
+        </div>
+        <div class="control">
+           <input id="allcollect" type="button" value="全部采集" onclick="menue('allcollect')"/>
+        </div>
+        <div class="control">
+           <input id="singlepuase" type="button" value="单次暂停" onclick="menue('singlepuase')"/>
+        </div>
+        <div class="control">
+           <input id="allpuase" type="button" value="全部暂停" onclick="menue('allpuase')"/>
+        </div>
+        <div class="control">
+           <input id="closemenue" type="button" value="关闭菜单" onclick="menue('closemenue')"/>
+        </div>  
+    </fieldset>
+    <fieldset id="cameramenue">
+    	<legend>摄像头菜单</legend>
+    	<div class="control">
+           <input id="detailinfo" type="button" value="详细信息" onclick="cameramenue('detailinfo')"/>
+        </div>
+    	<div class="control" >
+           <input id="startphoto" type="button" value="开启摄像" onclick="cameramenue('startphoto')"/>
+        </div>
+        <div class="control" >
+           <input id="closephoto" type="button" value="关闭摄像" onclick="cameramenue('closephoto')"/>
+        </div>
+        <div class="control">
+           <input id="closemenue" type="button" value="关闭菜单" onclick="cameramenue('closemenue')"/>
+        </div>
+    </fieldset>
+    <fieldset id="controls" >
+        <legend>详细信息</legend>
+       	<div class="base" id="base">
+        <div class="control">
+            温室序号：<select>
+            <option value="01" selected>01</option>
+            <option value="02" >02</option>
+            <option value="03">03</option>
+        </select>
+        <input type="button" value="收起信息" onclick="closecontrol()"/>
+        </div>
+        <div class="control">
+            设备类型：<input id="type" type="text" value="0" />
+        </div>
+        <div class="control">
+            设备地址：<input id="id" type="text" value="0" />
+        </div>
+        <div class="control">
+            工作状态：<input id="work" type="text" value="0" />
+        </div>
+        </div>
+        <div class="detail" id="detail">
+        <div class="control">
+            空气温度：<input id='atemp' type="text" value="0" />
+        </div>
+        <div class="control">
+            空气湿度：<input id='ahim' type="text" value="0" />
+        </div>
+        <div class="control">
+            土壤温度：<input id='stemp' type="text" value="0"  />
+        </div>
+        <div class="control">
+            土壤湿度：<input id='shim' type="text" value="0"   />
+        </div>
+        <div class="control">
+            光照强度：<input id='ill' type="text" value="0"  />
+        </div>
+        <div class="control">
+            Co2 浓度：<input id='co2' type="text" value="0"   />
+        </div>
+        <div class="control">
+            网关电压：<input id='vol' type="text" value="0.0"  />
+        </div>
+        </div>
+    </fieldset>
+</div>
+
+<script>
+
+    var container;
+
+    var camera, scene, renderer;
+
+    var raycaster;
+    var points = [];
+    var mouse;
+    var mtlLoader;
+    var texture,onProgress,onError,loader;
+    //var isworking = false;
+    var workingstate = {};
+
+    var windowHalfX = window.innerWidth / 2;
+    var windowHalfY = window.innerHeight / 2;
+    //详细信息控件的尺寸
+    var dboxwidth = $("#controls").width();
+	var dboxheight = $("#controls").height();
+	
+    start();
+    init();
+    animate();
+    
+    
+
+    function init() {
+
+        container = document.getElementById('container');
+        document.body.appendChild( container );
+        var info = document.getElementById('info');
+        info.style.position = 'absolute';
+        info.style.top = '10px';
+        info.style.width = '100%';
+        info.style.textAlign = 'center';
+        info.innerHTML = '请点击温室里的节点查看详细数据！<br>';
+
+        container.appendChild( info );
+
+        camera = new THREE.PerspectiveCamera( 45, 
+        		window.innerWidth / window.innerHeight, 1, 2000 );
+
+        camera.position.x = 10;
+        camera.position.y = 100;
+        camera.position.z = 100;
+
+
+        controls = new THREE.TrackballControls( camera );
+
+        controls.rotateSpeed = 5.0;
+        controls.zoomSpeed = 5;
+        controls.panSpeed = 2;
+
+        controls.noZoom = false;
+        controls.noPan = false;
+
+        controls.staticMoving = true;
+        controls.dynamicDampingFactor = 0.3;
+
+        // scene
+
+        scene = new THREE.Scene();
+
+        var ambient = new THREE.AmbientLight( 0xffffff );
+        scene.add( ambient );
+
+        /*var directionalLight = new THREE.DirectionalLight( 0xffeedd );
+        directionalLight.position.set( 0, 0, 1 );
+        scene.add( directionalLight );*/
+
+        // texture
+        texture = new THREE.Texture();
+
+        onProgress = function ( xhr ) {
+            if ( xhr.lengthComputable ) {
+                var percentComplete = xhr.loaded / xhr.total * 100;
+                console.log( Math.round(percentComplete, 2) + '% downloaded' );
+            }
+        };
+
+        onError = function ( xhr ) {
+        };
+        loader = new THREE.ImageLoader();
+        /* loader.load( 'obj/green_grass.jpg', function ( image ) {
+
+            texture.image = image;
+            texture.needsUpdate = true;
+
+        } ); */
+
+        // model
+        mtlLoader = new THREE.MTLLoader();
+        mtlLoader.setBaseUrl( 'obj/' );
+        mtlLoader.setPath( 'obj/' );
+
+        loadhouse();
+
+        loadcamera(-20,20,12);
+        
+        
+        //topology();
+        setTimeout(topology, 2000);
+
+        //loadgateway(10,20,12);
+        //x=(-60,70) y=(0,22) z=(-15,45)
+        //loadpoint(-60,0,10);
+        //loadpoint(70,0,10);
+        //loadpoint(10,30,45);
+        //loadpoint(10,0,-15);
+
+        
+        /* var geometry = new THREE.BoxGeometry( 4, 3, 2);
+         var material = new THREE.MeshBasicMaterial( { color:0x257595,opacity: 0.5} );
+         var point = new THREE.Mesh( geometry, material );
+         point.position.set(10,22,0);
+         scene.add(point);
+        points.push(point); */
+
+        raycaster = new THREE.Raycaster();
+        mouse = new THREE.Vector2();
+        renderer = new THREE.WebGLRenderer();
+        renderer.setPixelRatio( window.devicePixelRatio );
+        renderer.setSize( window.innerWidth, window.innerHeight );
+        renderer.setClearColor(0xeeeeee, 1.0);
+        container.appendChild( renderer.domElement );
+
+        document.addEventListener( 'mousedown', onDocumentMouseDown, false );
+        document.addEventListener( 'touchstart', onDocumentTouchStart, false );
+        //
+
+        window.addEventListener( 'resize', onWindowResize, false );
+
+    }
+
+    function onWindowResize() {
+
+
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize( window.innerWidth, window.innerHeight );
+        controls.handleResize();
+
+    }
+    function onDocumentTouchStart( event ) {
+
+        event.preventDefault();
+
+        event.clientX = event.touches[0].clientX;
+        event.clientY = event.touches[0].clientY;
+        onDocumentMouseDown( event );
+
+    }
+    function onDocumentMouseDown( event ) {
+        event.preventDefault();
+        mouse.x = ( event.clientX / renderer.domElement.clientWidth ) * 2 - 1;
+        mouse.y = - ( event.clientY / renderer.domElement.clientHeight ) * 2 + 1;
+        //console.log(event.clientX+":"+event.clientY);
+        //console.log(window.innerWidth+":"+window.innerHeight);
+        raycaster.setFromCamera( mouse, camera );
+        var intersects = raycaster.intersectObjects( points );		
+        if ( intersects.length > 0 ) {
+            var data = intersects[ 0 ].object.position;
+            console.log(data);
+            $.post("address.action",{"xposition":data.x,"yposition":data.y,
+            	"zposition":data.z}, function(data) {
+    			if ($.trim(data) != "") {
+    				//alert(data);
+    				console.log(data);
+    				var d = eval('(' + data + ')');
+    				var type = d['pointnum'];
+    				
+    				
+    				
+    				var x=event.clientX,y=event.clientY;
+    				//console.log(boxwidth+":"+boxheight);
+    				if(type=="point"){
+    					var boxwidth = $("#menue").width();
+        				var boxheight = $("#menue").height();
+    					$("#controls").attr("style","display: none");
+    					$("#cameramenue").attr("style", "display:none");
+    					if(window.innerWidth-event.clientX<boxwidth){
+    							x = event.clientX-boxwidth*1.2;
+    					}
+						if (window.innerHeight - event.clientY < boxheight) {
+							y = event.clientY - boxheight*1.2;
+						}
+						$("#menue").attr("style","display:inline;top:" + y + "px;left:" + x	+ "px");
+						$("#address").val(d['point']);
+						$("#detail").attr("style", "display: inline");
+						var atype = document.getElementById('type');
+						atype.setAttribute('value', "传感器节点");
+						var id = document.getElementById('id');
+						id.setAttribute('value', d['point']);
+						var work = document.getElementById('work');
+						if (workingstate[d['point']]) {
+							work.setAttribute('value', '正在工作...');
+						} else {
+							work.setAttribute('value', '停止工作...');
+						}
+						var atemp = document.getElementById('atemp');
+						atemp.setAttribute('value', d['airT']);
+						var ahim = document.getElementById('ahim');
+						ahim.setAttribute('value', d['airH']);
+						var stemp = document.getElementById('stemp');
+						var st = d['soilT'];
+						if (st <= 0) {
+							st = '不含该监测项';
+						}
+						stemp.setAttribute('value', st);
+						var shim = document.getElementById('shim');
+						var sh = d['soilH'];
+						if (sh <= 0) {
+							sh = '不含该监测项';
+						}
+						shim.setAttribute('value', sh);
+						var co2 = document.getElementById('co2');
+						var c = d['co2'];
+						if (c <= 0) {
+							c = '不含该监测项';
+						}
+						co2.setAttribute('value', c);
+						var ill = document.getElementById('ill');
+						var i = d['ill'];
+						if (i <= 0) {
+							i = '不含该监测项';
+						}
+						ill.setAttribute('value', i);
+						var vol = document.getElementById('vol');
+						vol.setAttribute('value', d['voltage']);
+					}
+					if (type == "gateway") {
+						$("#controls").attr("style", "display: inline;top:" +(window.innerHeight-dboxheight)/2
+								+ "px;left:" +(window.innerWidth-dboxwidth)/2 + "px");
+						$("#menue").attr("style", "display:none");
+						$("#cameramenue").attr("style", "display:none");
+						$("#address").val(d['point']);
+						$("#detail").attr("style", "display: none");
+						var atype = document.getElementById('type');
+						atype.setAttribute('value', "无线网关");
+						var id = document.getElementById('id');
+						id.setAttribute('value', d['point']);
+						var work = document.getElementById('work');
+						work.setAttribute('value', '正在工作...');
+
+					}
+					if (type == "camera") {
+						var cboxwidth = $("#cameramenue").width();
+	    				var cboxheight = $("#cameramenue").height();
+						$("#controls").attr("style", "display: none");
+						$("#menue").attr("style", "display:none");
+						if(window.innerWidth - event.clientX < cboxwidth){
+							x = event.clientX-cboxwidth*1.2;
+						}
+						if (window.innerHeight - event.clientY < cboxheight) {
+							y = event.clientY - cboxheight*1.2;
+						}
+						$("#cameramenue").attr(
+								"style","display:inline;top:" + y+ "px;left:" + x + "px");
+						$("#address").val(d['point']);
+						
+						var atype = document.getElementById('type');
+						atype.setAttribute('value', "摄像头");
+						var id = document.getElementById('id');
+						id.setAttribute('value', d['point']);
+						var work = document.getElementById('work');
+						work.setAttribute('value', '停止工作...');
+
+					}
+				}
+			});
+
+		} else {
+			//$("#controls").attr("style","display: none");
+			//$("#menue").attr("style", "display:none");
+			//$("#cameramenue").attr("style", "display:none");
+		}
+
+	}
+	//load greenhouse
+	function loadhouse() {
+		mtlLoader.load('green6.mtl', function(materials) {
+
+			materials.preload();
+
+			var objLoader = new THREE.OBJLoader();
+			objLoader.setMaterials(materials);
+			objLoader.setPath('obj/');
+			objLoader.load('green6.obj', function(object) {
+				object.traverse(function(child) {
+
+					if (child instanceof THREE.Mesh) {
+
+						//child.material.map = texture;
+					}
+				});
+				scene.add(object);
+			}, onProgress, onError);
+		});
+	}
+
+	//load camera
+	function loadcamera(x, y, z) {
+		mtlLoader.load('camera.mtl', function(materials) {
+
+			materials.preload();
+
+			var objLoader = new THREE.OBJLoader();
+			objLoader.setMaterials(materials);
+			objLoader.setPath('obj/');
+			objLoader.load('camera.obj', function(object) {
+				object.traverse(function(child) {
+
+					if (child instanceof THREE.Mesh) {
+						child.position.set(x, y, z);
+						points.push(child);
+					}
+				});
+				//object.position.set(-20,20,12);
+				scene.add(object);
+			}, onProgress, onError);
+		});
+	}
+
+	//load geteway
+	function loadgateway(x, y, z) {
+		mtlLoader.load('gateway.mtl', function(materials) {
+
+			materials.preload();
+
+			var objLoader = new THREE.OBJLoader();
+			objLoader.setMaterials(materials);
+			objLoader.setPath('obj/');
+			objLoader.load('gateway.obj', function(object) {
+				object.traverse(function(child) {
+
+					if (child instanceof THREE.Mesh) {
+						child.position.set(x, y, z);
+						points.push(child);
+					}
+				});
+				//object.position.set(10,20,12);
+				scene.add(object);
+			}, onProgress, onError);
+		});
+	}
+
+	//load point
+	function loadpoint(x, y, z, fx, fy, fz) {
+		mtlLoader.load('point.mtl', function(materials) {
+
+			materials.preload();
+
+			var objLoader = new THREE.OBJLoader();
+			objLoader.setMaterials(materials);
+			objLoader.setPath('obj/');
+			objLoader.load('point.obj', function(object) {
+				object.traverse(function(child) {
+
+					if (child instanceof THREE.Mesh) {
+						child.position.set(x, y, z);
+						points.push(child);
+					}
+				});
+				//object.position.set(x,y,z);
+				scene.add(object);
+
+			}, onProgress, onError);
+		});
+		drawline(x, y, z, fx, fy, fz);
+	}
+
+	//draw line
+	function drawline(sx, sy, sz, dx, dy, dz) {
+		var geometry = new THREE.Geometry();
+		//节点的坐标需要进行调整（x-3,y+2,z-4）
+		geometry.vertices.push(new THREE.Vector3(sx - 3, sy + 2, sz - 4));
+		//网关的坐标需要进行调整（x-4,y+2,z）
+		geometry.vertices.push(new THREE.Vector3(dx - 5, dy + 1, dz));
+		var line = new THREE.Line(geometry, new THREE.LineBasicMaterial({
+			color : 0xff0000,
+			linewidth : 3
+		}));
+		scene.add(line);
+	}
+	//
+	function animate() {
+
+		requestAnimationFrame(animate);
+		render();
+
+	}
+
+	function render() {
+
+		renderer.render(scene, camera);
+		controls.update();
+
+	}
+	//start
+	function start() {
+		$.post("open.action", function(data) {
+			if ($.trim(data) != "") {
+				//alert("ok");			
+			}
+		});
+
+	}
+	//get topology
+	var d = null;
+	function topology() {
+		var gatep = null;
+		$.post("topology.action", function(data) {
+			if ($.trim(data) != "") {
+				//alert(data);
+				d = eval('(' + data + ')');
+				var root = d["root"];
+				$.post("position.action", {
+					"address" : root.substring(0, 16)
+				}, function(data) {
+					if ($.trim(data) != "") {
+						//alert(data);
+						gatep = eval('(' + data + ')');
+						loadgateway(gatep["x"], gatep["y"], gatep["z"]);
+						var Child = d[root];
+						drawpoint(gatep["x"], gatep["y"], gatep["z"], Child);
+					}
+				});
+			}
+		});
+	}
+	function drawpoint(x, y, z, father) {
+		var childs = father.split(",");
+		var pointp = null;
+		for (var i = 0; i < childs.length; i++) {
+			var child = childs[i];
+			//var quality = child.substring(16);
+			workingstate[child.substring(0, 16)] = false;
+			$.post("position.action", {
+				"address" : child.substring(0, 16)
+			}, function(data) {
+				if ($.trim(data) != "") {
+					//alert(data);
+					pointp = eval('(' + data + ')');
+					loadpoint(pointp["x"], pointp["y"], pointp["z"], x, y, z);
+					var hasChild = d[child.substring(0, 16)];
+					if (hasChild != null) {
+						//alert(hasChild);
+						drawpoint(pointp["x"] + 2, pointp["y"] + 1,
+								pointp["z"] - 4, hasChild);
+					}
+				}
+			});
+
+		}
+	}
+
+	function menue(command) {
+		$("#menue").attr("style", "display:none");
+		var add = $("#address").val();
+		if (command == "singlecollect") {
+			var para = {
+				"data" : "26525341" + add
+						+ "000000000000000000000000000000000000002A"
+			};
+			$.post("begin.action", para, function(data) {
+				//isworking = true;
+			});
+			workingstate[add] = true;
+
+			return;
+		}
+		if (command == "allcollect") {
+			for ( var w in workingstate) {
+				workingstate[w] = true;
+			}
+			return;
+		}
+		if (command == "singlepuase") {
+			var para = {
+				"data" : "26545341" + add
+						+ "000000000000000000000000000000000000002A"
+			};
+			$.post("stop.action", para, function(data) {
+				//isworking = false;	
+			});
+			workingstate[add] = false;
+			//alert(command);
+			return;
+		}
+		if (command == "allpuase") {
+
+			for ( var w in workingstate) {
+				workingstate[w] = false;
+			}
+			return;
+		}
+		if (command == "detailinfo") {
+			//alert(add+":"+workingstate[add]);
+			$("#controls").attr("style", "display: inline;top:" +(window.innerHeight-dboxheight)/2
+					+ "px;left:" +(window.innerWidth-dboxwidth)/2 + "px");
+			return;
+		}
+		if (command == "closemenue") {
+
+			return;
+		}
+
+	}
+	function cameramenue(para) {
+		$("#cameramenue").attr("style", "display:none");
+		if (para == "startphoto") {
+
+			alert(para);
+			return;
+		}
+		if (para == "closephoto") {
+
+			alert(para);
+			return;
+		}
+		if (para == "detailinfo") {
+
+			$("#controls").attr("style", "display: inline;top:" +(window.innerHeight-dboxheight)/2
+					+ "px;left:" +(window.innerWidth-dboxwidth)/2 + "px");
+			$("#detail").attr("style", "display: none");
+			return;
+		}
+		if (para == "closemenue") {
+
+			return;
+		}
+	}
+	function closecontrol() {
+		$("#controls").attr("style", "display: none");
+	}
+</script>
+
+</body>
+</html>

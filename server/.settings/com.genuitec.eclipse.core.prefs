@@ -1,0 +1,3 @@
+eclipse.preferences.version=1
+validator.Checked=WebRoot/echarts/echarts-all.js,WebRoot/echarts/chart,WebRoot/echarts/echarts.js
+validator.Unchecked=

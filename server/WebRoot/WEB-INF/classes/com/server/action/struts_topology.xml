@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+"-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+"http://struts.apache.org/dtds/struts-2.0.dtd" >
+<!-- struts2的核心配置文件，在应用部署时加载并解析 -->
+<struts>
+	<package name="topologypackage" extends="struts-default" namespace="/">
+		<action name="topology" class="topologyAction" method="getTopo">
+			
+		</action>
+		<action name="topologyparameter" class="topologyAction" method="getParameter">
+			
+		</action>		
+	</package>
+</struts>

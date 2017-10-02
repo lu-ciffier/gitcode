@@ -1,0 +1,66 @@
+@CHARSET "UTF-8";
+
+body {
+	text-align: center;
+}
+
+.ui-overlay-a,.ui-page-theme-a,.ui-page-theme-a .ui-panel-wrapper {
+	background-color: #88B8F7;
+	text-align: center;
+}
+
+#portconfig {
+	width: 50%;
+	height: auto;
+	margin-top: 5%;
+	border-style: solid;
+	border-width: 2px;
+}
+
+#positionconfig {
+	width: 50%;
+	height: auto;
+	margin-top: 3%;
+	border-style: solid;
+	border-width: 2px;
+}
+
+#alertconfig {
+	width: 50%;
+	height: auto;
+	margin-top: 3%;
+	border-style: solid;
+	border-width: 2px;
+}
+
+#deletealert {
+	width: 50%;
+	height: auto;
+	margin-top: 3%;
+	border-style: solid;
+	border-width: 2px;
+}
+
+#userconfig {
+	width: 50%;
+	height: auto;
+	margin-top: 3%;
+	border-style: solid;
+	border-width: 2px;
+}
+
+.control {
+	margin-bottom: 3px;
+}
+
+table {
+	margin: auto;
+	padding: 0.5%;
+	width: 100%;
+	font-family:sans-serif;	
+	text-align: center;
+}
+
+td,th {
+	text-align: center;
+}
